@@ -38,8 +38,7 @@ jobs:
     - name: Upload Binary to Release
       uses: softprops/action-gh-release@v2
       with:
-        files: |
-          dist/Astro2UTC-linux
-          dist/Astro2UTC.exe
+        files: dist/*
+        fail_on_unmatched_files: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
