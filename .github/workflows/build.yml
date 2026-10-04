@@ -4,6 +4,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -26,12 +29,12 @@ jobs:
         pip install pyinstaller
 
     - name: Build for Linux
-      if: runner.os == 'Linux'
+      if: matrix.os == 'ubuntu-latest'
       run: |
         pyinstaller --onefile --console --name "Astro2UTC-linux" astro_converter/cli.py
 
     - name: Build for Windows
-      if: runner.os == 'Windows'
+      if: matrix.os == 'windows-latest'
       run: |
         pyinstaller --onefile --console --name "Astro2UTC.exe" astro_converter/cli.py
 
