@@ -1,0 +1,45 @@
+name: Build Executables
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install PyInstaller
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+
+    - name: Build for Linux
+      if: runner.os == 'Linux'
+      run: |
+        pyinstaller --onefile --console --name "Astro2UTC-linux" astro_converter/cli.py
+
+    - name: Build for Windows
+      if: runner.os == 'Windows'
+      run: |
+        pyinstaller --onefile --console --name "Astro2UTC.exe" astro_converter/cli.py
+
+    - name: Upload Binary to Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          dist/Astro2UTC-linux
+          dist/Astro2UTC.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
